@@ -125,6 +125,32 @@ class Script(scripts.Script):
             outputs=[hfp_tome_ratio],
             show_progress = False,
         )
+        
+        self.infotext_fields = [
+            (enable_hrplus, "Hires plus"),
+            (enable_hfp_smartstep, "Smart step"),
+            (enable_hfp_tome, "Hires ToMe"),
+            (hfp_sampler_index, "Hires sampler"),
+            (hfp_cfg, "Hires CFG"),
+            (hfp_smartstep_min, "SmartStep min"),
+            (hfp_tome_ratio, "ToMe ratio"),
+            (add_prompts, "Add prompts"),
+            (alter_prompt, "Hires prompts"),
+            (alter_prompt_n, "Hires N_prompts")
+        ]
+        
+        self.paste_field_names = [
+            (enable_hrplus, "Hires plus"),
+            (enable_hfp_smartstep, "Smart step"),
+            (enable_hfp_tome, "Hires ToMe"),
+            (hfp_sampler_index, "Hires sampler"),
+            (hfp_cfg, "Hires CFG"),
+            (hfp_smartstep_min, "SmartStep min"),
+            (hfp_tome_ratio, "ToMe ratio"),
+            (add_prompts, "Add prompts"),
+            (alter_prompt, "Hires prompts"),
+            (alter_prompt_n, "Hires N_prompts")
+        ]
 
         return [enable_hrplus, enable_hfp_smartstep, enable_hfp_tome, add_prompts, hfp_cfg, hfp_sampler_index, alter_prompt, alter_prompt_n, hfp_smartstep_min, hfp_tome_ratio]
 
@@ -147,24 +173,36 @@ class Script(scripts.Script):
         p.do_not_save_samples = not shared.opts.save_images_before_highres_fix
         p.seed = p.seed + batch_number
         
-        if hfp_cfg:
-            p.extra_generation_params["Hires CFG"] = hfp_cfg
+        if enable_hrplus:
+            p.extra_generation_params["Hires plus"] = enable_hrplus
+            
+        if enable_hfp_smartstep:
+            p.extra_generation_params["Smart step"] = enable_hfp_smartstep
+        
+        if enable_hfp_tome:
+            p.extra_generation_params["Hires ToMe"] = enable_hfp_tome
 
         sampler = hfp_samplers[hfp_sampler_index].name
         if hfp_sampler_index != 0 and sampler != p.sampler_name:
-            p.extra_generation_params["Hires Sampler"] = hfp_samplers[hfp_sampler_index].name
+            p.extra_generation_params["Hires sampler"] = hfp_samplers[hfp_sampler_index].name
+            
+        if hfp_cfg:
+            p.extra_generation_params["Hires CFG"] = hfp_cfg
 
-        if enable_hfp_tome:
-            p.extra_generation_params["Hires ToMe"] = enable_hfp_tome
+        if hfp_smartstep_min != 9:
+            p.extra_generation_params["SmartStep min"] = hfp_smartstep_min
+            
+        if hfp_tome_ratio != 0.5:
+            p.extra_generation_params["ToMe ratio"] = hfp_tome_ratio
 
         if p.hr_resize_x == 0 and p.hr_resize_y == 0:
             p.extra_generation_params["Hires upscale"] = p.hr_scale
         else:
             p.extra_generation_params["Hires resize"] = f"{p.hr_resize_x}x{p.hr_resize_y}"
             
-        steps = get_steps(p,enable_hfp_smartstep,hfp_smartstep_min)
-        if p.steps != steps:
-            p.extra_generation_params["Hires steps"] = steps
+        #steps = get_steps(p,enable_hfp_smartstep,hfp_smartstep_min)
+        #if p.steps != steps:
+            #p.extra_generation_params["Hires steps"] = steps
 
         if p.hr_second_pass_steps:
             p.extra_generation_params["Hires steps"] = p.hr_second_pass_steps
@@ -173,7 +211,7 @@ class Script(scripts.Script):
             p.extra_generation_params["Hires upscaler"] = p.hr_upscaler
             
         if alter_prompt != "" or alter_prompt_n != "":
-            p.extra_generation_params["Prompts type"] = f"append" if add_prompts else f"replace"
+            p.extra_generation_params["Add prompts"] = add_prompts
             
         if alter_prompt != "":
             p.extra_generation_params["Hires prompts"] = alter_prompt
