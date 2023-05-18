@@ -1,6 +1,6 @@
 import gradio as gr
 import math, tomesd
-from modules import scripts, shared, sd_samplers_common, sd_samplers
+from modules import scripts, script_callbacks, shared, sd_samplers_common, sd_samplers
 from modules.ui_components import FormRow
 from modules.images import resize_image
 from modules.processing import process_images, StableDiffusionProcessingTxt2Img, StableDiffusionProcessingImg2Img
@@ -157,7 +157,7 @@ class Script(scripts.Script):
     def process_batch(self, p:StableDiffusionProcessingTxt2Img, enable_hrplus:bool, enable_hfp_smartstep:bool, enable_hfp_tome:bool, add_prompts:bool, hfp_cfg:float, hfp_sampler_index:int, alter_prompt:str, alter_prompt_n:str, hfp_smartstep_min:int, hfp_tome_ratio:float, batch_number, prompts, seeds,  subseeds):
         global HFP_ON, hfp_samplers
         
-        if p.enable_hr and enable_hrplus:
+        if p.enable_hr and (enable_hrplus or getattr(p, 'enable_hrplus', False)):
             if p.hr_resize_x == 0 and p.hr_resize_y == 0 and p.hr_scale == 1:
                 return
             print(' Hijacking Hires. fix...  ')
@@ -261,23 +261,67 @@ class Script(scripts.Script):
         p2.n_iter = 1
         p2.batch_size = 1
         p2.do_not_save_samples = False
-        p2.cfg_scale = hfp_cfg or p.cfg_scale
+        p2.cfg_scale = (hfp_cfg or getattr(p, 'hfp_cfg', 0)) or p.cfg_scale
         p2.width  = target_width
         p2.height = target_height
-        p2.sampler_name = hfp_samplers[hfp_sampler_index].name if hfp_sampler_index != 0 else p.sampler_name
+        p2.sampler_name = getattr(p, "hfp_sampler_index", None) or hfp_samplers[hfp_sampler_index].name if hfp_sampler_index != 0 else p.sampler_name
         if p.sampler_name in ['PLMS', 'UniPC']:  # PLMS/UniPC do not support img2img so we just silently switch to DDIM
             p2.sampler_name = 'DDIM'
         p2.seed = p.seed
         p2.subseed = p.subseed
         p2.subseed_strength = p.subseed_strength
         
-        if enable_hfp_tome:
-            ToMe.load(p.sd_model, hfp_tome_ratio)
+        p2.extra_generation_params["Steps"] = p.steps
+        p2.extra_generation_params["Sampler"] = p.sampler_name
+        p2.extra_generation_params["CFG scale"] = p.cfg_scale
+        p2.extra_generation_params["Size"] = f"{p.width}x{p.height}"
+        
+        if enable_hfp_tome or getattr(p, "enable_hfp_tome", False):
+            ToMe.load(p.sd_model, getattr(p, "hfp_tome_ratio", 0) or hfp_tome_ratio)
         proc = process_images(p2)
-        if enable_hfp_tome:
+        if enable_hfp_tome or getattr(p, "enable_hfp_tome", False):
             ToMe.unload(p.sd_model)
             
         imgs = proc.images
         pp.image = imgs[0]
         
         shared.opts.img2img_fix_steps = step_opt
+        
+def make_axis_options():
+    xyz_grid = [x for x in scripts.scripts_data if x.script_class.__module__ == "xyz_grid.py"][0].module
+    
+    def apply_hires_cfg(p, x, xs):
+        setattr(p, "enable_hrplus", True)
+        setattr(p, "hfp_cfg", x)
+        
+    def apply_hires_sampler(p, x, xs):
+        hr_sampler = sd_samplers.samplers_map.get(x.lower(), None)
+        if hr_sampler is None:
+            raise RuntimeError(f"Unknown sampler: {x}")
+        setattr(p, "enable_hrplus", True)
+        setattr(p, "hfp_sampler_index", hr_sampler)
+        
+    def apply_tome_ratio(p, x, xs):
+        if 0.9 >= x >= 0.1:
+            setattr(p, "enable_hrplus", True)
+            setattr(p, "enable_hfp_tome", True)
+            setattr(p, "hfp_tome_ratio", x)
+        else:
+            raise RuntimeError(f"Invalid Merging Ratio: {x}")
+        
+    extra_axis_options = [
+        xyz_grid.AxisOptionTxt2Img("[HF+] Hires Sampler", str, apply_hires_sampler, choices=lambda: [x.name for x in sd_samplers.samplers_for_img2img]),
+        xyz_grid.AxisOptionTxt2Img("[HF+] Hires CFG", float, apply_hires_cfg),
+        xyz_grid.AxisOptionTxt2Img("[HF+] ToMe ratio", float, apply_tome_ratio)
+    ]
+    if not any("[HF+]" in x.label for x in xyz_grid.axis_options):
+        xyz_grid.axis_options.extend(extra_axis_options)
+        
+def callbackBeforeUi():
+    try:
+        make_axis_options()
+    except Exception as e:
+        traceback.print_exc()
+        print(f"Failed to add support for X/Y/Z Plot Script because: {e}")
+        
+script_callbacks.on_before_ui(callbackBeforeUi)
