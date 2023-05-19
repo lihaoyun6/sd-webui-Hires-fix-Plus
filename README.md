@@ -1,4 +1,5 @@
 # Hires. fix Plus
+[[中文版]](./README_zh.md)  
 Add more optional parameters and ToMe to Stable Diffusion WebUI's Hires. fix  
 
 ## About
@@ -8,7 +9,8 @@ This extension can add more available parameters and Token Merging support to SD
 <img src="./images/ui.jpg"/>  
 
 ## Usage
-If you want to use Hires.fix+, please enable `Hires.fix` first, then check `Enable Hires.fix+`. After that you can set the additional parameters.  
+You need to enable both `Hires.fix` and `Enable Hires.fix+` to use this extension.  
+After that you can set the additional parameters:  
 
 - **Use Smart-Steps**  
 
@@ -33,10 +35,10 @@ If you want to use Hires.fix+, please enable `Hires.fix` first, then check `Enab
 	> The larger the value, the faster the iteration speed, but the worse the image details
 	
 ## Install
-1. Go to SD WebUI's extension tab
+1. Go to SD WebUI's `extension` tab
 2. Click `Install from URL` subtab
 3. Paste `https://github.com/lihaoyun6/sd-webui-Hires-fix-Plus` into the URL textbox
-4. Click Install and wait for it to complete
+4. Click `Install` and wait for it to complete
 5. Once completed, the WebUI needs to be reloaded
 
 ## Credits
