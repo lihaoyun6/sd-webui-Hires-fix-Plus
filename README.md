@@ -19,8 +19,9 @@ After that you can set the additional parameters:
 - **ToMe for Hires. fix**  
 	> Use Token Merging (tomesd) during the Hires. fix process to increase the iteration speed
 	
-- **Append prompts, not replace**
-	> Append the extra prompts to the original prompts instead of replacing it
+- **Add new prompts**
+	> Append the extra prompts to the original prompts.  
+	> If you want to replace prompts instead of appending, turn off `Append Hires prompts to the end of the original prompts instead of replacing it` in `Settings` > `Hires. fix+`  
 	
 - **Hires Sampling method**
 	> Set a different sampler than txt2img for Hires. fix
@@ -28,11 +29,8 @@ After that you can set the additional parameters:
 - **Hires CFG**
 	> Set a different CFG Scale value than txt2img for Hires. fix
 
-- **Minimus steps**
-	> If Smart-Step is enabled, the number of iterations for Hires. fix will never be less than this
-	
-- **ToMe Merging Ratio**
-	> The larger the value, the faster the iteration speed, but the worse the image details
+- **Settings**
+	> The extension will add a `Token Merging` group in the `Settings`, where you can access the full ToMe options  
 	
 ## Install
 1. Go to SD WebUI's `extension` tab
