@@ -171,7 +171,7 @@ class HiresFixPlus(scripts.Script):
 
     def after_component(self, component, **kwargs):
         if kwargs.get("elem_id") == f"txtimg_hr_finalres":
-            HiresFixPlus.warring_text = gr.HTML(visible=False, value="If <span style='font-weight: bold;color: #F4BF4F'>Hires steps</span> is set, <span style='font-weight: bold;color: #F4BF4F'>Smart-Steps</span> will do nothing!", elem_id="hfp_warring_text")
+            HiresFixPlus.warring_text = gr.HTML(visible=False, value="If <span style='font-weight: bold;color: #F4BF4F'>Hires steps</span> is set, <span style='font-weight: bold;color: #F4BF4F'>Use Smart-Steps</span> will do nothing!", elem_id="hfp_warring_text")
 
     def before_component(self, component, **kwargs):
         if kwargs.get("elem_id") == f"txt2img_prompt":
