@@ -345,7 +345,7 @@ def create_settings_items():
     ))
     shared.opts.add_option("token_merging_ratio", shared.OptionInfo(
         0.5, "Token Merging - Ratio",
-        gr.Slider, {"minimum": 0, "maximum": 0.75, "step": 0.1}, section=section_tome
+        gr.Slider, {"minimum": 0, "maximum": 0.99, "step": 0.01}, section=section_tome
     ))
     shared.opts.add_option("token_merging_max_downsample", shared.OptionInfo(
         "1", "Token Merging - Max downsample",
