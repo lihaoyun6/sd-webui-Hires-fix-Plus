@@ -326,7 +326,8 @@ class HiresFixPlus(scripts.Script):
         
         batch_index = 0
         imgs = proc.images
-        pp.image = imgs[0]
+        if len(imgs) > 0:
+            pp.image = imgs[0]
         
         opts.img2img_fix_steps = step_opt
 
