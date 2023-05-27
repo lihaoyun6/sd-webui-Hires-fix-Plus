@@ -87,8 +87,8 @@ class ToMe:
         print(' Loading tomesd...  ')
         tomesd.apply_patch(
             sd_model,
-            ratio=int(ratio),
-            max_downsample=float(opts.token_merging_max_downsample),
+            ratio=float(ratio),
+            max_downsample=int(opts.token_merging_max_downsample),
             sx=int(opts.token_merging_stride_x),
             sy=int(opts.token_merging_stride_y),
             use_rand=bool(opts.token_merging_use_rand),
