@@ -320,6 +320,7 @@ class HiresFixPlus(scripts.Script):
         
         if enable_hfp_tome or getattr(p, "enable_hfp_tome", False):
             ToMe.load(p.sd_model, getattr(p, "hfp_tome_ratio", 0) or opts.token_merging_ratio)
+        shared.state.nextjob()
         proc = process_images(p2)
         if enable_hfp_tome or getattr(p, "enable_hfp_tome", False):
             ToMe.unload(p.sd_model)
