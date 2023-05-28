@@ -10,7 +10,7 @@ from modules.paths_internal import modules_path
 from modules import scripts, script_callbacks, shared, sd_samplers
 
 extf, ext = os.path.split(scripts.basedir())
-version = program_version().replace('v','')
+version = re.search("v[\d\.]*", program_version())[0].replace('v','')
 low = StrictVersion(version) < StrictVersion('1.3.0')
 
 prefix = '!!!000'
@@ -28,6 +28,13 @@ def get_force():
 		return True
 	return False
 
+def check_hack():
+	global org, hack
+	with open(procpy,'r') as f:
+		if org in f.read():
+			return True
+	return False
+
 def get_hack():
 	global org, hack
 	with open(procpy,'r') as f:
@@ -42,6 +49,9 @@ def hack_cfg():
 		org, hack = hack, org
 	else:
 		print('Modifying pipeline...  ')
+	if not check_hack():
+		print('File content does not match, cannot hijack!  ')
+		return
 	file_data = ""
 	with open(procpy, "r", encoding="utf-8") as f:
 		file_data = f.read().replace(org,hack)
