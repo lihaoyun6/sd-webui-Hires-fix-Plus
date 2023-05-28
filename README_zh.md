@@ -11,25 +11,16 @@
 ## 使用说明
 要使用此插件, 请同时启用 `Hires.fix` 和 `Enable Hires.fix+`. 然后可以设置下列任何附加参数:  
 
-- **Use Smart-Steps** (优化迭代次数)
+- **Force Smart-Steps** (强制优化迭代次数)
 
 	> 使用公式: $\log_{s}{10}\cdot ds$ 来在保证出图质量的情况下尽可能减少迭代次数, 提升出图速度  
-	
-- **ToMe for Hires. fix** (为 Hires. fix 启用 ToMe)
-	> 在高分辨率修复阶段启用 ToMe Merging 优化器以提升出图速度, 但会损失少量画面细节  
-	
-- **Append prompts, not replace** (追加而非替换提示词)
-	> 将自定义提示词追加到文生图提示词末尾, 并用于高分辨率修复  
-	> 如果需要替换提示词而不是追加的话, 请在`设置`>`Hires. fix+`中关闭`Append Hires prompts to the end of the original prompts instead of replacing it`
-	
-- **Hires Sampling method** (高分辨率采样方法)
-	> 允许用户为高清修复设置与文生图不同的采样器  
+	> 注: 此选项默认启用, 启用时会忽略`Hires steps`设置的值, 若想手动指定高清迭代次数, 请关闭此选项   
 	
 - **Hires CFG** (高分辨率 CFG Scale)
-	> 允许用户为高清修复设置与文生图不同的CFG Scale值  
+	> 允许用户为高清修复设置与文生图不同的`CFG Scale`值, 有缓解画风油腻, 画面琐碎, 人脸变形等情况的作用  
 
 - **Settings**
-	> 此插件会在设置页面中添加一个选项组`Token Merging`, 你可以在这里控制ToMe的各项参数  
+	> 此插件会在设置页面中添加一个名为`Hires. fix+`的选项组, 在这里可修改`Smart-Steps`的最低优化值  
 	
 ## 安装
 1. 前往 SD WebUI 的 `扩展` 标签页
@@ -39,6 +30,4 @@
 5. 提示安装成功后重载 WebUI 即可启用
 
 ## 鸣谢
-- 灵感来源: [stable-diffusion-webui-hires-fix-progressive](https://github.com/Kahsolt/stable-diffusion-webui-hires-fix-progressive) @Kahsolt  
 - [Stable Diffusion web UI](https://github.com/AUTOMATIC1111/stable-diffusion-webui) @AUTOMATIC1111  
-- [Token Merging for Stable Diffusion](https://github.com/dbolya/tomesd) @Bolya, Daniel and Hoffman, Judy  
