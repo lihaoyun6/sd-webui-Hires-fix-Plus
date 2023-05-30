@@ -69,12 +69,12 @@ def sample(self, conditioning, unconditional_conditioning, seeds, subseeds, subs
 				target_height = self.hr_upscale_to_y
 
 			if latent_scale_mode is not None:
-					for i in range(samples.shape[0]):
-						if opts.data.get("hfp_save_every_image", False):
+				for i in range(samples.shape[0]):
+					if opts.data.get("hfp_save_every_image", False):
+						save_intermediate(samples, i)
+					else:
+						if t == 1:
 							save_intermediate(samples, i)
-						else:
-							if t == 1:
-								save_intermediate(samples, i)
 					
 				samples = torch.nn.functional.interpolate(samples, size=(target_height // opt_f, target_width // opt_f), mode=latent_scale_mode["mode"], antialias=latent_scale_mode["antialias"])
 				
