@@ -69,8 +69,12 @@ def sample(self, conditioning, unconditional_conditioning, seeds, subseeds, subs
 				target_height = self.hr_upscale_to_y
 
 			if latent_scale_mode is not None:
-				for i in range(samples.shape[0]):
-					save_intermediate(samples, i)
+					for i in range(samples.shape[0]):
+						if opts.data.get("hfp_save_every_image", False):
+							save_intermediate(samples, i)
+						else:
+							if t == 1:
+								save_intermediate(samples, i)
 					
 				samples = torch.nn.functional.interpolate(samples, size=(target_height // opt_f, target_width // opt_f), mode=latent_scale_mode["mode"], antialias=latent_scale_mode["antialias"])
 				
@@ -90,7 +94,11 @@ def sample(self, conditioning, unconditional_conditioning, seeds, subseeds, subs
 					x_sample = x_sample.astype(np.uint8)
 					image = Image.fromarray(x_sample)
 					
-					save_intermediate(image, i)
+					if opts.data.get("hfp_save_every_image", False):
+						save_intermediate(samples, i)
+					else:
+						if t == 1:
+							save_intermediate(samples, i)
 					
 					image = images.resize_image(0, image, target_width, target_height, upscaler_name=self.hr_upscaler)
 					image = np.array(image).astype(np.float32) / 255.0
@@ -306,6 +314,9 @@ def create_settings_items():
 	opts.add_option("hfp_smartstep_min", shared.OptionInfo(
 		9, "If Smart-Step is enabled, the number of iterations for Hires. fix will never be less than this:",
 		gr.Slider, {"minimum": 1, "maximum": 50, "step": 1}, section=section_hfp
+	))
+	opts.add_option("hfp_save_every_image", shared.OptionInfo(
+		False, "If \"Save a copy of image before doing face restoration.\" is enabled, save every image during rolling generation", section=section_hfp
 	))
 	opts.add_option("hfp_jitter_seeds", shared.OptionInfo(
 		False, "Jitter the seeds of sub-generations when doing a rolling generation (Still deterministic)", section=section_hfp
