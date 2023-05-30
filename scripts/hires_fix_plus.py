@@ -10,7 +10,7 @@ from modules import scripts, script_callbacks, shared, sd_samplers, devices, ext
 
 from modules.shared import opts
 from modules.processing import program_version
-from modules.processing import StableDiffusionProcessingTxt2Img, create_random_tensors, opt_C, opt_f, decode_first_stage, get_fixed_seed
+from modules.processing import StableDiffusionProcessingTxt2Img, create_random_tensors, opt_C, opt_f, decode_first_stage, get_fixed_seed, create_infotext
 
 suppver = "1.3.0"
 version = re.search("v[\d\.]*", program_version())[0].replace('v','')
